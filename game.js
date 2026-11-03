@@ -4,7 +4,7 @@
 const P=JetPhysics, T=window.THREE, $=id=>document.getElementById(id);
 const input={gas:false,left:false,right:false,assist:false,brake:false};
 const requestedMap=Number(new URLSearchParams(location.search).get('map'));
-let state=P.create(requestedMap>=1&&requestedMap<=P.levels.length?requestedMap-1:0), paused=false, overview=false, showOverview=true, soundOn=false, audio, engine, engineGain, last=0, accumulator=0, recordSaved=false, lastEvent='', eventUntil=0;
+let state=P.create(Number.isInteger(requestedMap)&&requestedMap>=1&&requestedMap<=P.levels.length?requestedMap-1:0), paused=false, overview=false, showOverview=true, soundOn=false, audio, engine, engineGain, last=0, accumulator=0, recordSaved=false, lastEvent='', eventUntil=0;
 let records={};try{records=JSON.parse(localStorage.getItem('jetfall-corkscrew-v2')||'{}');if(!records||typeof records!=='object'||Array.isArray(records))records={};}catch{}
 const phaseNames={ready:'01 — 跑道加速',runway:'01 — 跑道加速',twist:'02 — 螺旋翻转 180°',air:'03 — 倒扣出轨 · 空中扶正',landing:'04 — 四轮着地 · 制动',success:'04 — 安全着陆',crashed:'本次试跑结束'};
 const canvas=$('game');let renderer,scene,camera,car,world,flames=[],wheels=[],dust,roadMat,bodyMat,sky,landingObjects=new T.Group(),cameraTarget=new T.Vector3(),camPos=new T.Vector3(),lookPos=new T.Vector3();
