@@ -1,0 +1,60 @@
+name: Verify and deploy JETFALL
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify driving and landing simulation
+        run: |
+          node --check game.js
+          node --check physics.js
+          node .github/qa/physics.cjs
+      - name: Install browser test runtime
+        run: |
+          npm install --prefix work/qa-runtime --no-audit --no-fund playwright@1.56.1
+          work/qa-runtime/node_modules/.bin/playwright install --with-deps chromium
+      - name: Verify WebGL and playable route
+        env:
+          NODE_PATH: ${{ github.workspace }}/work/qa-runtime/node_modules
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/jetfall-server.log 2>&1 &
+          node .github/qa/browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-verification
+          path: work/screenshots/
+      - name: Assemble static site
+        run: |
+          mkdir _site
+          cp index.html style.css physics.js game.js sw.js manifest.webmanifest icon.svg icon-192.png icon-512.png _site/
+          cp -R vendor _site/
+          touch _site/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

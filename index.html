@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#141918"><meta name="description" content="JETFALL：加速驶过180°螺旋轨道，倒扣飞出，喷气扶正，四轮安全着陆。原创3D汽车特技游戏。">
+<title>JETFALL · 螺旋飞车</title><link rel="icon" href="icon.svg"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="header"><a class="brand" href="./"><span class="brand-symbol">J<span>↗</span></span>JETFALL<span class="brand-cn">螺旋飞车</span></a><div class="header-center"><span class="online"></span> STUNT DRIVING LAB <span class="dim">/ 试车实验室</span></div><button class="plain" id="help">操作指南 <span>↗</span></button></header>
+<main>
+<section class="intro"><div><div class="eyebrow"><i></i> ACCELERATE. INVERT. LAND.</div><h1>翻过半圈<span>，</span>稳稳落地<span>。</span></h1><p>从轮胎抓地，到车顶朝下。最后一段，交给喷气。</p></div><div class="intro-number">180<span>°</span><small>一次螺旋 · 四轮着陆</small></div></section>
+<section class="workspace">
+<div class="stage-column">
+<div class="stage-caption"><span><i class="online"></i> 实时驾驶 <b> / LIVE RUN</b></span><span id="levelTag">01 / FIRST INVERSION</span></div>
+<div class="game-shell" id="gameShell">
+<canvas id="game" aria-label="3D 螺旋汽车特技游戏。方向上或W加速和喷气，左右或AD翻转，E扶正。"></canvas>
+<div class="game-top"><div class="location"><small id="sector">试验场 01 / DESERT CIRCUIT</small><strong id="levelName">半圈之后</strong></div><div class="game-actions"><button id="camera" title="切换全景与跟车视角" aria-label="切换视角">◉</button><button id="pause" title="暂停 P" aria-label="暂停">Ⅱ</button><button id="restart" title="重试 R" aria-label="重试">↻</button><button id="fullscreen" title="全屏" aria-label="全屏">⛶</button></div></div>
+<div class="phase-label" id="phaseLabel">01 — 跑道加速</div>
+<div class="landing-distance" id="airGauge" hidden>距着陆面 <b id="height">0.0</b> m</div>
+<div class="live-hint" id="liveHint">从地面出发，驶过 180° 螺旋轨道</div>
+<div id="overlay" class="overlay"><div class="overlay-card"><div class="eyebrow" id="overlayKicker">YOUR NEXT STUNT / 01</div><h2 id="overlayTitle">把世界，翻个面。</h2><p id="overlayText">踩下油门，驶过半圈螺旋。<br>倒扣出轨后，喷气扶正，四轮落地。</p><div class="route-mini"><span>01<small>加速</small></span><i>↗</i><span>02<small>螺旋</small></span><i>↻</i><span>03<small>扶正</small></span><i>↘</i><span>04<small>着陆</small></span></div><div class="result" id="result" hidden></div><button id="start" class="primary">发车，开始挑战 <span>↗</span></button><button class="secondary" id="next" hidden>下一条赛道 →</button><small class="overlay-foot" id="overlayFoot">按空格发车 · 然后按住 ↑ 加速</small></div></div>
+<div class="telemetry"><div><small>SPEED / 车速</small><strong id="speed">000 <em>km/h</em></strong></div><div><small>ROLL / 翻转</small><strong id="roll">0<em>°</em></strong></div><div><small>DESCENT / 下落</small><strong id="descent">0.0 <em>m/s</em></strong></div><div class="fuel"><small>JET FUEL / 喷气燃料 <b id="fuelText">100%</b></small><div class="meter"><i id="fuelBar"></i></div><span id="integrity">车况 100%</span></div></div>
+<div id="renderError" class="render-error" hidden><strong>当前浏览器无法启动 3D 图形</strong><p>请开启浏览器硬件加速，或使用支持 WebGL 的 Chrome / Safari。</p></div>
+</div>
+<div class="controls"><div class="keyboard-controls"><span><kbd>↑</kbd> 加速 / 喷气</span><span><kbd>←</kbd><kbd>→</kbd> 空中翻转</span><span><kbd>E</kbd> 扶正辅助</span></div><button class="plain" id="sound" aria-pressed="false">音效 关</button></div>
+<div class="touch-controls" aria-label="触屏操控"><button data-control="left" aria-label="向左翻转">↶<small>左翻</small></button><button data-control="right" aria-label="向右翻转">↷<small>右翻</small></button><button data-control="assist" class="assist">扶正<small>空中按住</small></button><button data-control="gas" class="gas">油门 / 喷气<small>按住驱动</small></button></div>
+<div class="route-strip"><span class="route-title">本次路线</span><div class="route-step active" data-phase="runway"><b>01</b><span>四轮加速</span></div><i></i><div class="route-step" data-phase="twist"><b>02</b><span>螺旋翻转</span></div><i></i><div class="route-step" data-phase="air"><b>03</b><span>空中扶正</span></div><i></i><div class="route-step" data-phase="landing"><b>04</b><span>安全着陆</span></div></div>
+</div>
+<aside><div class="aside-top"><span class="eyebrow">CHOOSE YOUR RUN</span><h2>试跑计划<span> / 03</span></h2></div><div id="missions" class="missions"></div><div class="pilot-note"><span class="note-icon">↻</span><div><h3>先翻正，再点火。</h3><p>出轨时车顶朝下。先按住 <kbd>E</kbd> 扶正，等开始下落后，用 <kbd>↑</kbd> 短促喷气，把着地速度降到 <b id="landingLimit">6.0</b> m/s 以内。</p></div></div><div class="landing-guide"><span>着陆检查</span><div><i></i> 车轮朝下，倾角 ≤ 22°</div><div><i></i> 控制下落速度，保持低翻转率</div><div><i></i> 进入发光着陆区</div><small>轻微重落地会弹跳，还能继续补救。</small></div><div class="best-record"><span>本赛道最佳</span><strong id="best">— — —</strong></div></aside>
+</section>
+<footer><span>JETFALL <b>/ 原创 3D 汽车特技</b></span><span>概念灵感创作 · 非 Tesla 官方产品</span><span>KEEP YOUR WHEELS DOWN. ↘</span></footer>
+</main>
+<dialog id="helpDialog"><button class="close" id="closeHelp" aria-label="关闭">×</button><span class="eyebrow">DRIVER'S HANDBOOK</span><h2>先踩油门，再翻个面。</h2><ol><li><b>加速驶上螺旋轨道</b><p>按住 ↑ / W。汽车从四轮着地开始，沿带有锁轮导轨的 180° 螺旋道路逐渐翻成倒扣。出轨之前一直加速。</p></li><li><b>倒扣飞出，先扶正</b><p>松开油门，按住 E 用姿态喷口扶正。也可以用 ← → / A D 自己控制翻滚，E 能帮助稳定旋转。辅助扶正会消耗少量燃料。</p></li><li><b>开始下落后，再喷气缓冲</b><p>↑ / W / 空格在空中变为底部喷气。看下落速度和着陆区距离，短按或按住缓冲。倒扣时点火会向下推，要先翻正。</p></li><li><b>四轮接地，滑行制动</b><p>着地时倾角不超过 22°，翻转率不超过 1 rad/s，下落速度低于赛道要求。轻微重落地会弹跳、损伤悬挂；车顶着地或冲击超过 9 m/s 会失败。燃料用完仍能滑翔。</p></li></ol><p class="help-bottom">P / Esc 暂停 · R 重试 · ◉ 切换视角<br>手机可同时按住“扶正”和“喷气”，横屏视野更大。</p><button class="primary" id="understood">明白了，去试跑 ↗</button></dialog>
+<script src="vendor/three.min.js"></script><script src="physics.js"></script><script src="game.js"></script>
+</body></html>
